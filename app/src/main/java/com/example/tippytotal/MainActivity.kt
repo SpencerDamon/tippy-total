@@ -1,5 +1,6 @@
 package com.example.tippytotal
 
+import android.animation.ArgbEvaluator
 import android.icu.text.NumberFormat
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -10,6 +11,7 @@ import android.util.Log
 import android.widget.EditText
 import android.widget.SeekBar
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 
 
 //private const val TAG = "MainActivity"
@@ -25,6 +27,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tvTipPercentLabel: TextView
     private lateinit var tvTipAmount: TextView
     private lateinit var tvTotalAmount: TextView
+    private lateinit var tvTipDescription: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +38,8 @@ class MainActivity : AppCompatActivity() {
         tvTipPercentLabel = findViewById(R.id.tvTipPercentLabel)
         tvTipAmount = findViewById(R.id.tvTipAmount)
         tvTotalAmount = findViewById(R.id.tvTotalAmount)
+        //18. Add reference for tvTipDescription
+        tvTipDescription = findViewById(R.id.tvTipDescription)
 
         //12. Assign constant value to seekBar indicator, placing it in the center of its width
         // when activity first starts,
@@ -42,6 +47,9 @@ class MainActivity : AppCompatActivity() {
 
         //13. Assign constant value to show a percentage when activity first starts
         tvTipPercentLabel.text = "$INITIAL_TIP_PERCENT%"
+
+        // 21. Call updateDescription so it shows the value before user inputs amount
+        updateTipDescription(INITIAL_TIP_PERCENT)
 
         //3. We get notified by the seek bar if we add a listener to it
         // tell the android system what to do, when something has happened,
@@ -55,6 +63,7 @@ class MainActivity : AppCompatActivity() {
         // system.  These methods will automatically be invoked for us when the user interacts with
         // the edit text or seekBar.
         seekBarTip.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener {
+
             // 6. Before we update the UI.let's first add a log statement to figure out what is
             // going on. Log.i is a method which takes two parameters first tag which is a string
             // and we'll define later. The second is also a string which is a msg in our
@@ -63,6 +72,7 @@ class MainActivity : AppCompatActivity() {
             // Now change variable p0 (position 0) to seekBar, change p1 to progress, and p2 to fromUser
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 Log.i(tag, "onProgressChanged $progress")
+
                 // 9. Update the UI of tvTipPercentLabel to show the current progress of seekBar
                 // But want it to show up as a string, and we want to concatenate the result with
                 // the percent symbol. Run app, you should see a number and % sign at
@@ -72,6 +82,9 @@ class MainActivity : AppCompatActivity() {
                 // 16. To display the tip amount while scrubbing seekBar indicator, call the
                 // function because all logic has been abstracted from there.
                 computeTipAndTotal()
+                // 19. Update tezt on tvTipDescription TeztView, create function in Main,
+                // pass in progress as a parameter
+                updateTipDescription(progress)
 
 
             }
@@ -99,6 +112,38 @@ class MainActivity : AppCompatActivity() {
 
         })
     }
+    // 20.Change tvTipDescription statements based on value of seekBar
+    private fun updateTipDescription(tipPercent: Int) {
+        val tipDescription = when (tipPercent) {
+            in 0..1 -> "Not worth a dime!"
+            in 2..9 -> "Poor"
+            in 10..14 -> "Acceptable"
+            in 15..19 -> "Good"
+            in 20..24 -> "Great"
+            else -> "Excellent"
+        }
+        tvTipDescription.text = tipDescription
+        // 21. update the color based on the tip percent
+        // Interpolation: If I say that I am running 100 miles, and I am roughly at the 75
+        // mile mark.  You in your head estimates 3/4. Assuming of course your going at a constant
+        // from the 0 - 100 miles. Same thing here, every color represents a number.
+        // So, 2/3 the very worst color, and 1/3 the very best. We'll use Google's ArgbEvaluator
+        // to pick a color in between via indez
+
+        val color = ArgbEvaluator().evaluate(
+            // 22. tipPercent / seekBarTip.maz error Type mismatch Require Float found Int
+            // because by default the numerator and the denominator are two integers and we will
+            // have truncation going on here, to remedy, typecast one to float value.
+            tipPercent.toFloat() / seekBarTip.max,
+            ContextCompat.getColor(this, R.color.color_worst_tip),
+            ContextCompat.getColor(this, R.color.color_best_tip)
+        ) as Int
+        // 23. set the interactive color animation to the tezt
+        tvTipDescription.setTextColor(color)
+
+
+    }
+
     //15.
     private fun computeTipAndTotal() {
         if (etBaseAmount.text.isEmpty()) {// without this line, app crash when backspace amount
@@ -110,11 +155,18 @@ class MainActivity : AppCompatActivity() {
         val baseAmount = etBaseAmount.text.toString().toDouble()
         val tipPercent = seekBarTip.progress
         // 2. Compute the tip total
-        val tipAmount = baseAmount * tipPercent / 100 // turn into a decimal value .00
+        var tipAmount = 0.00
+        if (seekBarTip.progress <= 1) {
+            tipAmount = 0.09
+
+        } else {
+            tipAmount = baseAmount * tipPercent / 100 // turn into a decimal value .00
+        }
         val totalAmount = baseAmount + tipAmount
         // 3. Update the UI
         // 17. Truncate double amount for currency formatting with %.2f
         tvTipAmount.text = "%.2f".format(tipAmount)
         tvTotalAmount.text = "%.2f".format(totalAmount)
+
     }
 }
