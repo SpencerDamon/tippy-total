@@ -20,13 +20,11 @@ The following **extensions** are implemented:
 * [x] Custom colors palette selected
 * [x] List anything else that you did to improve the app functionality or design!
 
-## Video Walkthrough
+## Video Walkthrough 
 
 Here's a walkthrough of implemented user stories:
 
-<img src='http://i.imgur.com/link/to/your/gif/file.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
-
-GIF created with [LiceCap](http://www.cockos.com/licecap/).
+![Video_Walkthrough](Tippy_Total_Video_Walkthrough.gif)
 
 ## Notes
 
