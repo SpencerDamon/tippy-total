@@ -1,7 +1,7 @@
 package com.example.tippytotal
 
 import android.animation.ArgbEvaluator
-import android.icu.text.NumberFormat
+import java.text.NumberFormat
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
@@ -17,11 +17,12 @@ import androidx.core.content.ContextCompat
 //private const val TAG = "MainActivity"
 // 11. Show a percentage when the activity first starts
 private const val INITIAL_TIP_PERCENT = 15
+private const val TAG = "MainActivity"
 class MainActivity : AppCompatActivity() {
     // 1. Create member variables, late initialization in onCreate not in the Main Constructor
     // 8. Add tag for log, and run, open logcat, type MainActivity in search bar, and scrub
     // the seeBar you should see the value go from 1 - 30 in logcat
-    val tag = "MainActivity"
+
     private lateinit var etBaseAmount: EditText
     private lateinit var seekBarTip: SeekBar
     private lateinit var tvTipPercentLabel: TextView
@@ -71,7 +72,7 @@ class MainActivity : AppCompatActivity() {
             // a current value of the seek bar.
             // Now change variable p0 (position 0) to seekBar, change p1 to progress, and p2 to fromUser
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                Log.i(tag, "onProgressChanged $progress")
+                Log.i(TAG, "onProgressChanged $progress")
 
                 // 9. Update the UI of tvTipPercentLabel to show the current progress of seekBar
                 // But want it to show up as a string, and we want to concatenate the result with
@@ -104,7 +105,7 @@ class MainActivity : AppCompatActivity() {
 
             override fun afterTextChanged(p0: Editable?) {
                 // 13. Add another log just to get a better idea of what is happening
-                Log.i(tag, "afterTextChanged $p0") //$p0 what the user is typing at that moment
+                Log.i(TAG, "afterTextChanged $p0") //$p0 what the user is typing at that moment
                 // 14. We need to create a computeTipAmount function outside of MainActivity
                 // after the TextChanged, so let's call it here.
                 computeTipAndTotal()
@@ -155,18 +156,25 @@ class MainActivity : AppCompatActivity() {
         val baseAmount = etBaseAmount.text.toString().toDouble()
         val tipPercent = seekBarTip.progress
         // 2. Compute the tip total
-        var tipAmount = 0.00
-        if (seekBarTip.progress <= 1) {
-            tipAmount = 0.09
+        val tipAmount: Double
+        val notWorthADime = 0.09
+        tipAmount = if (seekBarTip.progress <= 1) {
+            notWorthADime
 
         } else {
-            tipAmount = baseAmount * tipPercent / 100 // turn into a decimal value .00
+            baseAmount * tipPercent / 100 // turn into a decimal value .00
         }
         val totalAmount = baseAmount + tipAmount
+
+        // Added below line to format tip with the local currency format
+        // Commented out updating the tvTipAmount.tezt View with fized truncation of %.2f
+        val formattedTip = NumberFormat.getCurrencyInstance().format(tipAmount)
+        tvTipAmount.text = formattedTip
+        tvTotalAmount.text = NumberFormat.getCurrencyInstance().format(totalAmount)
         // 3. Update the UI
         // 17. Truncate double amount for currency formatting with %.2f
-        tvTipAmount.text = "%.2f".format(tipAmount)
-        tvTotalAmount.text = "%.2f".format(totalAmount)
+        //tvTipAmount.text = "%.2f".format(tipAmount)
+        //tvTotalAmount.text = "%.2f".format(totalAmount)
 
     }
 }
