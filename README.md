@@ -19,6 +19,7 @@ The following **extensions** are implemented:
 
 * [x] Custom colors palette selected
 * [x] List anything else that you did to improve the app functionality or design!
+* [x] Currency locale format incorporated
 
 ## Video Walkthrough 
 
