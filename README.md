@@ -17,9 +17,11 @@ The following **required** functionality is completed:
 
 The following **extensions** are implemented:
 
-* [x] Custom colors palette selected
+* [x] Custom colors palette selected.
 * [x] List anything else that you did to improve the app functionality or design!
-* [x] Currency locale format incorporated
+* [x] Currency locale format incorporated.
+* [x] The user can round up the tip total.
+* [x] The user can round up the total amount.
 
 ## Video Walkthrough 
 
