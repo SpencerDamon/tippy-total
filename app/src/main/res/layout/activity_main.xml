@@ -143,20 +143,37 @@
 
 
     <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/round_up_switch"
+        android:id="@+id/swRoundUpTip"
         style="@style/Widget.AppCompat.CompoundButton.Switch"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="28dp"
         android:layout_marginEnd="16dp"
-        android:checked="true"
+        android:checked="false"
         android:fontFamily="sans-serif-light"
-        android:text="Round Up"
+        android:text="Round Up Tip"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/etNumberInParty" />
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/swRoundUpTotal"
+        style="@style/Widget.AppCompat.CompoundButton.Switch"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="22dp"
+        android:layout_marginEnd="16dp"
+        android:checked="false"
+        android:fontFamily="sans-serif-light"
+        android:text="Round Up Total"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/swRoundUpTip" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

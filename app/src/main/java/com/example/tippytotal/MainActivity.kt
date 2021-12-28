@@ -12,6 +12,7 @@ import android.widget.EditText
 import android.widget.SeekBar
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import com.google.android.material.switchmaterial.SwitchMaterial
 
 
 //private const val TAG = "MainActivity"
@@ -29,6 +30,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tvTipAmount: TextView
     private lateinit var tvTotalAmount: TextView
     private lateinit var tvTipDescription: TextView
+    private lateinit var swRoundUpTip: SwitchMaterial
+    private lateinit var swRoundUpTotal: SwitchMaterial
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,6 +44,10 @@ class MainActivity : AppCompatActivity() {
         tvTotalAmount = findViewById(R.id.tvTotalAmount)
         //18. Add reference for tvTipDescription
         tvTipDescription = findViewById(R.id.tvTipDescription)
+        swRoundUpTip = findViewById(R.id.swRoundUpTip)
+        swRoundUpTotal = findViewById(R.id.swRoundUpTotal)
+
+
 
         //12. Assign constant value to seekBar indicator, placing it in the center of its width
         // when activity first starts,
@@ -112,6 +119,13 @@ class MainActivity : AppCompatActivity() {
             }
 
         })
+
+        // Live updating of tvTipAmount with Material Switch
+        swRoundUpTip.setOnCheckedChangeListener {
+                _, isChecked -> if (isChecked) computeTipAndTotal() else computeTipAndTotal() }
+
+        swRoundUpTotal.setOnCheckedChangeListener {
+                _, isChecked  ->  if (isChecked) computeTipAndTotal() else computeTipAndTotal()}
     }
     // 20.Change tvTipDescription statements based on value of seekBar
     private fun updateTipDescription(tipPercent: Int) {
@@ -156,7 +170,7 @@ class MainActivity : AppCompatActivity() {
         val baseAmount = etBaseAmount.text.toString().toDouble()
         val tipPercent = seekBarTip.progress
         // 2. Compute the tip total
-        val tipAmount: Double
+        var tipAmount: Double
         val notWorthADime = 0.09
         tipAmount = if (seekBarTip.progress <= 1) {
             notWorthADime
@@ -164,7 +178,20 @@ class MainActivity : AppCompatActivity() {
         } else {
             baseAmount * tipPercent / 100 // turn into a decimal value .00
         }
-        val totalAmount = baseAmount + tipAmount
+
+        if (swRoundUpTip.isChecked) {
+            // Take the ceiling of the current tip, which rounds up to the next integer,
+            // and store the new value in the tip variable.
+            tipAmount = kotlin.math.ceil(tipAmount)
+        }
+
+        var totalAmount = baseAmount + tipAmount
+
+        if (swRoundUpTotal.isChecked) {
+            // Take the ceiling of the current tip, which rounds up to the next integer,
+            // and store the new value in the tip variable.
+            totalAmount = kotlin.math.ceil(totalAmount)
+        }
 
         // Added below line to format tip with the local currency format
         // Commented out updating the tvTipAmount.tezt View with fized truncation of %.2f
