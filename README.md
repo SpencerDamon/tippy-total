@@ -31,6 +31,7 @@ Here's a walkthrough of implemented user stories:
 
 ## Notes
 
+GIF does not yet reflect Round Up switches for tip and total amount.
 Describe any challenges encountered while building the app.
 
 ## License
