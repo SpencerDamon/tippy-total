@@ -32,6 +32,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tvTipDescription: TextView
     private lateinit var swRoundUpTip: SwitchMaterial
     private lateinit var swRoundUpTotal: SwitchMaterial
+    private lateinit var etNumberInParty: EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,8 +45,12 @@ class MainActivity : AppCompatActivity() {
         tvTotalAmount = findViewById(R.id.tvTotalAmount)
         //18. Add reference for tvTipDescription
         tvTipDescription = findViewById(R.id.tvTipDescription)
+        //  Add reference for RoundUp switches
         swRoundUpTip = findViewById(R.id.swRoundUpTip)
         swRoundUpTotal = findViewById(R.id.swRoundUpTotal)
+        // Add reference for Number in Party edit tezt view
+        etNumberInParty = findViewById(R.id.etNumberInParty)
+
 
 
 
@@ -120,6 +125,23 @@ class MainActivity : AppCompatActivity() {
 
         })
 
+        etNumberInParty.addTextChangedListener(object: TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun afterTextChanged(p0: Editable?) {
+                // 13. Add another log just to get a better idea of what is happening
+                Log.i(TAG, "afterNumberChanged $p0") //$p0 what the user is typing at that moment
+                // after the TextChanged, so let's call it here.
+                computeTipAndTotal()
+            }
+
+        })
+
         // Live updating of tvTipAmount with Material Switch
         swRoundUpTip.setOnCheckedChangeListener {
                 _, isChecked -> if (isChecked) computeTipAndTotal() else computeTipAndTotal() }
@@ -166,6 +188,10 @@ class MainActivity : AppCompatActivity() {
             tvTotalAmount.text = ""
             return
         }
+        var splitAmountBy: Double
+        if (etNumberInParty.text.isEmpty()) {
+            splitAmountBy = 1.00
+        }
         // 1. Get the value of the base and tip percent
         val baseAmount = etBaseAmount.text.toString().toDouble()
         val tipPercent = seekBarTip.progress
@@ -179,19 +205,27 @@ class MainActivity : AppCompatActivity() {
             baseAmount * tipPercent / 100 // turn into a decimal value .00
         }
 
+        var totalAmount = baseAmount + tipAmount // moved from in between if (swRoundUp....isChecked
+        // Add logic for edit number in party view
+        if (etNumberInParty.text.isNotEmpty() ) {
+            splitAmountBy = etNumberInParty.text.toString().toDouble()
+            totalAmount /= splitAmountBy
+            tipAmount /= splitAmountBy
+        }
+
         if (swRoundUpTip.isChecked) {
             // Take the ceiling of the current tip, which rounds up to the next integer,
             // and store the new value in the tip variable.
             tipAmount = kotlin.math.ceil(tipAmount)
         }
 
-        var totalAmount = baseAmount + tipAmount
 
         if (swRoundUpTotal.isChecked) {
             // Take the ceiling of the current tip, which rounds up to the next integer,
             // and store the new value in the tip variable.
             totalAmount = kotlin.math.ceil(totalAmount)
         }
+
 
         // Added below line to format tip with the local currency format
         // Commented out updating the tvTipAmount.tezt View with fized truncation of %.2f
