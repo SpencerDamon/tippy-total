@@ -189,6 +189,8 @@ class MainActivity : AppCompatActivity() {
             return
         }
         var splitAmountBy: Double
+
+        // Initialize splitAmount if null or empty or less than 1, stops runtime null ezception
         if (etNumberInParty.text.isEmpty()) {
             splitAmountBy = 1.00
         }
@@ -207,10 +209,15 @@ class MainActivity : AppCompatActivity() {
 
         var totalAmount = baseAmount + tipAmount // moved from in between if (swRoundUp....isChecked
         // Add logic for edit number in party view
-        if (etNumberInParty.text.isNotEmpty() ) {
+        if (etNumberInParty.text.isNotEmpty() && etNumberInParty.text.toString().toDouble() > 1) {
             splitAmountBy = etNumberInParty.text.toString().toDouble()
+            tipAmount /= splitAmountBy
+            totalAmount /= splitAmountBy
+        } else {
+            splitAmountBy = 1.00
             totalAmount /= splitAmountBy
             tipAmount /= splitAmountBy
+
         }
 
         if (swRoundUpTip.isChecked) {
