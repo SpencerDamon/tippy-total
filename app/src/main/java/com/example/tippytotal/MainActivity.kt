@@ -54,6 +54,10 @@ class MainActivity : AppCompatActivity() {
 
 
 
+        // TODO Create, and copy to private repo
+        //  TODO Remove How To tezt on public repo (after copy to private repo)
+        // TODO Clean Up the lateinit variables if possible
+        // TODO Assign hard coded variables to string resources
         //12. Assign constant value to seekBar indicator, placing it in the center of its width
         // when activity first starts,
         seekBarTip.progress = INITIAL_TIP_PERCENT
@@ -181,6 +185,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    // TODO Functional Decomposition of computeTipAndTotal()
     //15.
     private fun computeTipAndTotal() {
         if (etBaseAmount.text.isEmpty()) {// without this line, app crash when backspace amount
@@ -220,18 +225,16 @@ class MainActivity : AppCompatActivity() {
 
         }
 
-        if (swRoundUpTip.isChecked) {
-            // Take the ceiling of the current tip, which rounds up to the next integer,
-            // and store the new value in the tip variable.
-            tipAmount = kotlin.math.ceil(tipAmount)
-        }
+        // Take the ceiling of the current tip, which rounds up to the next integer,
+        // and store the new value in the tip variable.
+        tipAmount = roundUp(swRoundUpTip, tipAmount)
+
+        // Take the ceiling of the current total, which rounds up to the next integer,
+        // and store the new value in the totalAmount variable.
+        // Pass in <SwitchMaterial>, <Int>
+        totalAmount = roundUp(swRoundUpTotal, totalAmount)
 
 
-        if (swRoundUpTotal.isChecked) {
-            // Take the ceiling of the current tip, which rounds up to the next integer,
-            // and store the new value in the tip variable.
-            totalAmount = kotlin.math.ceil(totalAmount)
-        }
 
 
         // Added below line to format tip with the local currency format
@@ -245,4 +248,15 @@ class MainActivity : AppCompatActivity() {
         //tvTotalAmount.text = "%.2f".format(totalAmount)
 
     }
+
+    // Checks if switch is checked if so, round up to nearest integer, return amount
+    fun roundUp(switch: SwitchMaterial, amount: Double): Double {
+
+        if (switch.isChecked) {
+            return kotlin.math.ceil(amount)
+        } else {
+            return amount
+        }
+    }
+
 }

@@ -165,7 +165,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
         android:fontFamily="sans-serif-condensed-light"
-        android:text="Made by off the 🌄mountain apps"
+        android:text="Made by off the 🌄 mountain apps"
         android:textAllCaps="true"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:layout_constraintBottom_toBottomOf="parent"
