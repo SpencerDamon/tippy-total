@@ -14,13 +14,10 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.google.android.material.switchmaterial.SwitchMaterial
 
-
-//private const val TAG = "MainActivity"
 private const val INITIAL_TIP_PERCENT = 15
 private const val TAG = "MainActivity"
 class MainActivity : AppCompatActivity() {
-
-
+    
     private lateinit var etBaseAmount: EditText
     private lateinit var seekBarTip: SeekBar
     private lateinit var tvTipPercentLabel: TextView
@@ -46,8 +43,7 @@ class MainActivity : AppCompatActivity() {
         swRoundUpTotal = findViewById(R.id.swRoundUpTotal)
         etNumberInParty = findViewById(R.id.etNumberInParty)
 
-        // TODO Create, and copy to private repo
-        // TODO Remove How To tezt on public repo (after copy to private repo)
+
         // TODO Clean Up the lateinit variables if possible
         // TODO Assign hard coded variables to string resources
         seekBarTip.progress = INITIAL_TIP_PERCENT
@@ -58,19 +54,18 @@ class MainActivity : AppCompatActivity() {
         // shows the value before user inputs amount
         updateTipDescription(INITIAL_TIP_PERCENT)
 
-        These methods will automatically be invoked for us when the user interacts with
-        
         seekBarTip.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener {
 
-            // Now change variable p0 (position 0) to seekBar, change p1 to progress, and p2 to fromUser
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 Log.i(TAG, "onProgressChanged $progress")
 
                 // Update the UI of tvTipPercentLabel to show the current progress of seekBar
                 tvTipPercentLabel.text = "$progress%"
 
+                // Display tip amount while scrubbing the seekbar
                 computeTipAndTotal()
 
+                // Update text on tvTipDescription
                 updateTipDescription(progress)
             }
 
@@ -91,25 +86,25 @@ class MainActivity : AppCompatActivity() {
         })
 
         etNumberInParty.addTextChangedListener(object: TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
             override fun afterTextChanged(p0: Editable?) {
                 computeTipAndTotal()
             }
-
         })
 
         // Live updating of tvTipAmount with Material Switch
         swRoundUpTip.setOnCheckedChangeListener {
-                _, isChecked -> if (isChecked) computeTipAndTotal() else computeTipAndTotal() }
+                _, isChecked -> computeTipAndTotal()
+        }
 
         swRoundUpTotal.setOnCheckedChangeListener {
-                _, isChecked  ->  if (isChecked) computeTipAndTotal() else computeTipAndTotal()}
+                _, isChecked  -> computeTipAndTotal()
+        }
     }
+    
     // Changes tvTipDescription statements based on value of seekBar
     private fun updateTipDescription(tipPercent: Int) {
         val tipDescription = when (tipPercent) {
@@ -124,7 +119,7 @@ class MainActivity : AppCompatActivity() {
 
         // Google's ArgbEvaluator to pick a color in between via index
         val color = ArgbEvaluator().evaluate(
-            // tipPercent / seekBarTip.maz error Type mismatch Require Float found Int
+            // tipPercent / seekBarTip.max error Type mismatch Require Float found Int
             // because by default the numerator and the denominator are two integers and we will
             // have truncation going on here, to remedy, typecast one to float value.
             tipPercent.toFloat() / seekBarTip.max,
@@ -149,20 +144,21 @@ class MainActivity : AppCompatActivity() {
         if (etNumberInParty.text.isEmpty()) {
             splitAmountBy = 1.00
         }
+        
         // Get the value of the base and tip percent
         val baseAmount = etBaseAmount.text.toString().toDouble()
         val tipPercent = seekBarTip.progress
         // Compute the tip total
         var tipAmount: Double
         val notWorthADime = 0.09
+        
         tipAmount = if (seekBarTip.progress <= 1) {
             notWorthADime
-
         } else {
             baseAmount * tipPercent / 100 // turn into a decimal value .00
         }
 
-        var totalAmount = baseAmount + tipAmount // moved from in between if (swRoundUp....isChecked
+        var totalAmount = baseAmount + tipAmount
         // Add logic for edit number in party view
         if (etNumberInParty.text.isNotEmpty() && etNumberInParty.text.toString().toDouble() > 1) {
             splitAmountBy = etNumberInParty.text.toString().toDouble()
@@ -174,16 +170,15 @@ class MainActivity : AppCompatActivity() {
             tipAmount /= splitAmountBy
         }
 
-        // Take the ceiling of the current tip, which rounds up to the next integer,
-        // and store the new value in the tip variable.
+        // TODO() refactor into a single function
+        // Take the ceiling of the current tip, which rounds up to the next integer, and store the new value in the tip variable.
         tipAmount = roundUp(swRoundUpTip, tipAmount)
 
-        // Take the ceiling of the current total, which rounds up to the next integer,
-        // and store the new value in the totalAmount variable.
+        // Take the ceiling of the current total, which rounds up to the next integer, and store the new value in the totalAmount variable.
         totalAmount = roundUp(swRoundUpTotal, totalAmount)
         
         // Added below line to format tip with the local currency format
-        // Commented out updating the tvTipAmount.tezt View with fized truncation of %.2f
+        // Commented out updating the tvTipAmount.text View with fixed truncation of %.2f
         val formattedTip = NumberFormat.getCurrencyInstance().format(tipAmount)
         tvTipAmount.text = formattedTip
         tvTotalAmount.text = NumberFormat.getCurrencyInstance().format(totalAmount)
